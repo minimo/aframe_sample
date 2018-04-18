@@ -1,16 +1,17 @@
 <!DOCTYPE html>
 <html lang="ja">
-<head>
-  <meta charset="UTF-8">
-  <title>VRサンプル</title>
-  <!-- A-FrameのライブラリをCDNで読み込む -->
-  <script src="https://aframe.io/releases/0.8.2/aframe.js"></script>
-</head>
-<body>
-  <!-- シーンの定義 -->
-  <a-scene>
-    <!-- 全天球の背景画像として全天球写真を読み込む -->
-    <a-sky src="office.jpg"></a-sky>
-  </a-scene>
-</body>
+  <head>
+    <meta charset="UTF-8">
+    <title>VRサンプル</title>
+    <!-- A-FrameのライブラリをCDNで読み込む -->
+    <script src="https://aframe.io/releases/0.8.2/aframe.js"></script>
+  </head>
+  <body>
+    <a-scene>
+      <a-assets>
+        <video id="video" autoplay loop="true" src="MaryOculus.mp4">
+      </a-assets>
+      <a-videosphere src="#video"></a-videosphere>
+    </div>
+  </body>
 </html>
