@@ -1,5 +1,5 @@
 //modified by minimo
-//強制モバイル対応化
+//強制モバイル化
 var isForceMobile = true;
 
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.AFRAME = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
@@ -63382,7 +63382,7 @@ module.exports.Component = registerComponent('cursor', {
     el.removeState(STATES.HOVERING);
     el.removeState(STATES.FUSING);
     clearTimeout(this.fuseTimeout);
-    if (this.intersectedEl) { this.intersectedEl.removeState(STATES.HOVERED); }
+		if (this.intersectedEl) { this.intersectedEl.removeState(STATES.HOVERED); }
     this.removeEventListeners();
   },
 
@@ -73320,8 +73320,9 @@ module.exports.AScene = registerElement('a-scene', {
           vrManager.enabled = true;
           return vrDisplay.requestPresent([{source: this.canvas}])
                           .then(enterVRSuccess, enterVRFailure);
-        }
-        enterVRSuccess();
+        } else {
+					enterVRSuccess();
+				}
         return Promise.resolve();
 
         function enterVRSuccess () {
@@ -73376,10 +73377,10 @@ module.exports.AScene = registerElement('a-scene', {
           this.renderer.vr.enabled = false;
           vrDisplay = utils.device.getVRDisplay();
           return vrDisplay.exitPresent().then(exitVRSuccess, exitVRFailure);
-        }
-
-        // Handle exiting VR in all other cases (2D fullscreen, external exit VR event).
-        exitVRSuccess();
+        } else {
+	        // Handle exiting VR in all other cases (2D fullscreen, external exit VR event).
+					exitVRSuccess();
+				}
 
         return Promise.resolve();
 
