@@ -63774,8 +63774,6 @@ module.exports.Component = registerComponent('daydream-controls', {
   },
 
   injectTrackedControls: function () {
-		//modified by minimo
-		return;
     var el = this.el;
     var data = this.data;
     el.setAttribute('tracked-controls', {
