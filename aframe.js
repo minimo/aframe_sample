@@ -59231,7 +59231,8 @@ var race = function race(promises) {
 var isMobile = function isMobile() {
 	//modified by minimo
 	if (isForceMobile) return true;
-  return (/Android/i.test(navigator.userAgent) || /iPhone|iPad|iPod/i.test(navigator.userAgent)
+
+	return (/Android/i.test(navigator.userAgent) || /iPhone|iPad|iPod/i.test(navigator.userAgent)
   );
 };
 var copyArray = function copyArray(source, dest) {
@@ -61026,7 +61027,10 @@ Dpdb.prototype.recalculateDeviceParams_ = function () {
       this.onDeviceParamsUpdated(this.deviceParams);
     }
   } else {
-    console.error('Failed to recalculate device parameters.');
+		//modified by minimo
+		if (!isForceMobile) {
+			console.error('Failed to recalculate device parameters.');
+		}
   }
 };
 Dpdb.prototype.calcDeviceParams_ = function () {
@@ -61076,7 +61080,8 @@ Dpdb.prototype.calcDeviceParams_ = function () {
   }
 	//modified by minimo
 	if (isForceMobile) {
-//    return new DeviceParams({ xdpi: device.dp, ydpi: device.ydpi, bevelMm: device.bw });
+		//適切なデバイス設定を行えない為コメントアウト
+//    return new DeviceParams({ xdpi: device.xdpi, ydpi: device.ydpi, bevelMm: device.bw });
 	}
 	console.warn('No DPDB device match.');
   return null;
@@ -62094,7 +62099,8 @@ VRDisplay.prototype.requestPresent = function (layers) {
         if (self.isPresenting) {
           if (screen.orientation && screen.orientation.lock) {
             screen.orientation.lock('landscape-primary').catch(function (error) {
-              console.error('screen.orientation.lock() failed due to', error.message);
+							//modified by minimo
+							if (!isForceMobile) console.error('screen.orientation.lock() failed due to', error.message);
             });
           }
           self.waitingForPresent_ = false;
@@ -63768,6 +63774,8 @@ module.exports.Component = registerComponent('daydream-controls', {
   },
 
   injectTrackedControls: function () {
+		//modified by minimo
+		return;
     var el = this.el;
     var data = this.data;
     el.setAttribute('tracked-controls', {
@@ -73320,17 +73328,23 @@ module.exports.AScene = registerElement('a-scene', {
           vrManager.enabled = true;
           return vrDisplay.requestPresent([{source: this.canvas}])
                           .then(enterVRSuccess, enterVRFailure);
-        } else {
-					enterVRSuccess();
-				}
-        return Promise.resolve();
+        }
+				enterVRSuccess();
+				this.renderer.vr.enabled = true;
+				return Promise.resolve();
 
         function enterVRSuccess () {
-          self.addState('vr-mode');
+					//modified by minimo
+					if (self.is('vr-mode')) return;
+
+					self.addState('vr-mode');
           self.emit('enter-vr', {target: self});
           // Lock to landscape orientation on mobile.
           if (self.isMobile && screen.orientation && screen.orientation.lock) {
-            screen.orientation.lock('landscape');
+						//modified by minimo
+						if (!isForceMobile) {
+							screen.orientation.lock('landscape');
+						}
           }
           self.addFullScreenStyles();
 
@@ -73377,10 +73391,12 @@ module.exports.AScene = registerElement('a-scene', {
           this.renderer.vr.enabled = false;
           vrDisplay = utils.device.getVRDisplay();
           return vrDisplay.exitPresent().then(exitVRSuccess, exitVRFailure);
-        } else {
-	        // Handle exiting VR in all other cases (2D fullscreen, external exit VR event).
-					exitVRSuccess();
-				}
+        }
+
+				// Handle exiting VR in all other cases (2D fullscreen, external exit VR event).
+				exitVRSuccess();
+				//modified by minimo
+				this.renderer.vr.enabled = false;
 
         return Promise.resolve();
 
