@@ -61088,11 +61088,6 @@ Dpdb.prototype.calcDeviceParams_ = function () {
     var ydpi = device.dpi[1] || device.dpi;
     return new DeviceParams({ xdpi: xdpi, ydpi: ydpi, bevelMm: device.bw });
   }
-	//modified by minimo
-	if (isForceMobile) {
-		//適切なデバイス設定を行えない為コメントアウト
-//    return new DeviceParams({ xdpi: device.xdpi, ydpi: device.ydpi, bevelMm: device.bw });
-	}
 	console.warn('No DPDB device match.');
   return null;
 };
@@ -61324,8 +61319,8 @@ FusionPoseSensor.prototype.getOrientation = function () {
 
 	//modified by minimo
 	if (isForceMobile && !isTrueMobile) {
-		var qt = _pitchObject.quaternion.clone();
-		qt.multiply(_yawObject.quaternion);
+		var qt = _yawObject.quaternion.clone();
+		qt.multiply(_pitchObject.quaternion);
 		out.x = qt.x;
 		out.y = qt.y;
 		out.z = qt.z;
@@ -73357,9 +73352,6 @@ module.exports.AScene = registerElement('a-scene', {
 				return Promise.resolve();
 
         function enterVRSuccess () {
-					//modified by minimo
-					if (self.is('vr-mode')) return;
-
 					self.addState('vr-mode');
           self.emit('enter-vr', {target: self});
           // Lock to landscape orientation on mobile.
