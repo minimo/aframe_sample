@@ -1,6 +1,8 @@
 //modified by minimo
 //強制モバイル化
 var isForceMobile = true;
+var _pitchObject = null;
+var _yawObject = null;
 
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.AFRAME = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
 (function (process){
@@ -61291,8 +61293,8 @@ FusionPoseSensor.prototype.getOrientation = function () {
       out.x = 0;
       out.z = 0;
       out.normalize();
-    }
-    this.orientationOut_[0] = out.x;
+		}
+		this.orientationOut_[0] = out.x;
     this.orientationOut_[1] = out.y;
     this.orientationOut_[2] = out.z;
     this.orientationOut_[3] = out.w;
@@ -61311,7 +61313,16 @@ FusionPoseSensor.prototype.getOrientation = function () {
     out.z = 0;
     out.normalize();
   }
-  this.orientationOut_[0] = out.x;
+
+	//modified by minimo
+	var qt = _pitchObject.quaternion.clone();
+	qt.multiply(_yawObject.quaternion);
+	out.x = qt.x;
+	out.y = qt.y;
+	out.z = qt.z;
+	out.w = qt.w;
+
+	this.orientationOut_[0] = out.x;
   this.orientationOut_[1] = out.y;
   this.orientationOut_[2] = out.z;
   this.orientationOut_[3] = out.w;
@@ -65498,7 +65509,11 @@ module.exports.Component = registerComponent('look-controls', {
     this.yawObject = new THREE.Object3D();
     this.yawObject.position.y = 10;
     this.yawObject.add(this.pitchObject);
-  },
+
+		//modified by minimo
+		_pitchObject = this.pitchObject;
+		_yawObject = this.yawObject;
+	},
 
   /**
    * Add mouse and touch event listeners to canvas.
