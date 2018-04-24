@@ -1,4 +1,5 @@
 //modified by minimo
+//update 2018/04/23
 var isForceMobile = true;	//強制モバイル化
 var isTrueMobile = false;	//本当のモバイルフラグ
 var _pitchObject = null;	//VR時操作ハック用
@@ -61319,12 +61320,15 @@ FusionPoseSensor.prototype.getOrientation = function () {
 
 	//modified by minimo
 	if (isForceMobile && !isTrueMobile) {
-		var qt = _yawObject.quaternion.clone();
-		qt.multiply(_pitchObject.quaternion);
-		out.x = qt.x;
-		out.y = qt.y;
-		out.z = qt.z;
-		out.w = qt.w;
+		var scene = document.querySelector('a-scene');
+		if (scene.is('vr-mode')) {
+			var qt = _yawObject.quaternion.clone();
+			qt.multiply(_pitchObject.quaternion);
+			out.x = qt.x;
+			out.y = qt.y;
+			out.z = qt.z;
+			out.w = qt.w;
+		}
 	}
 
 	this.orientationOut_[0] = out.x;

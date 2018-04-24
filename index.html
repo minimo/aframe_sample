@@ -13,9 +13,12 @@
   <body>
     <a-scene>
       <a-assets>
-        <video id="video" autoplay loop="true" src="MaryOculus.mp4">
+        <video id="video" autoplay loop="true" src="4K.mp4">
       </a-assets>
-      <a-videosphere src="#video"></a-videosphere>
-    </div>
+      <a-entity camera="fov: 60" look-controls wasd-controls position="0 1.6 0" rotation="0 0 0" data-aframe-default-camera></a-entity>
+      <a-plane position="-2.6 1.46 2.75" rotation="3.44 124.87 0.0" width="29" height="29" color="#7BC8A4"></a-plane>
+      <a-videosphere src="#video" rotation="0 -90 0"></a-videosphere>
+    </a-scene>
   </body>
-</html>
+  <script src="vrider.js"></script>
+  </html>
