@@ -1,5 +1,5 @@
 //modified by minimo
-//update 2018/04/23
+//update 2018/04/24
 var isForceMobile = true;	//強制モバイル化
 var isTrueMobile = false;	//本当のモバイルフラグ
 var _pitchObject = null;	//VR時操作ハック用
@@ -61883,7 +61883,11 @@ var NoSleep = function () {
           window.setTimeout(window.stop, 0);
         }, 15000);
       } else {
-        this.noSleepVideo.play();
+				//modified by minimo
+				//Change it to execute if it is not iOS.
+				if (!isIOS()) {
+					this.noSleepVideo.play();
+				}
       }
     }
   }, {
