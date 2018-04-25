@@ -1,9 +1,35 @@
 //modified by minimo
-//update 2018/04/24
+//update 2018/04/25
 var isForceMobile = true;	//強制モバイル化
 var isTrueMobile = false;	//本当のモバイルフラグ
 var _pitchObject = null;	//VR時操作ハック用
 var _yawObject = null;		//VR時操作ハック用
+var _fullscreen = false;	//フルスクリーンフラグ
+
+//VRider専用特殊対応
+var enterVRider = function (parent, brother) {
+	if (_fullscreen) return;
+	var etc = document.getElementById("etc");
+	var movie_bar = document.querySelector(".vr-video-progress-bar-container");
+	var movie_ctrl = document.querySelector(".vr-video-controller");
+	etc.removeChild(movie_bar);
+	etc.removeChild(movie_ctrl);
+	parent.appendChild(movie_bar);
+	parent.appendChild(movie_ctrl);
+	_fullscreen = true;
+}
+
+var exitVRider = function (__parent) {
+	if (!_fullscreen) return;
+	var etc = document.getElementById("etc");
+	var movie_bar = document.querySelector(".vr-video-progress-bar-container");
+	var movie_ctrl = document.querySelector(".vr-video-controller");
+	__parent.removeChild(movie_bar);
+	__parent.removeChild(movie_ctrl);
+	etc.appendChild(movie_bar);
+	etc.appendChild(movie_ctrl);
+	_fullscreen = false;
+}
 
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.AFRAME = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
 (function (process){
@@ -62035,8 +62061,8 @@ VRDisplay.prototype.wrapForFullscreen = function (element) {
     parent.insertBefore(this.fullscreenWrapper_, this.fullscreenElement_);
     parent.removeChild(this.fullscreenElement_);
   }
-  this.fullscreenWrapper_.insertBefore(this.fullscreenElement_, this.fullscreenWrapper_.firstChild);
-  this.fullscreenElementCachedStyle_ = this.fullscreenElement_.getAttribute('style');
+	this.fullscreenWrapper_.insertBefore(this.fullscreenElement_, this.fullscreenWrapper_.firstChild);
+	this.fullscreenElementCachedStyle_ = this.fullscreenElement_.getAttribute('style');
   var self = this;
   function applyFullscreenElementStyle() {
     if (!self.fullscreenElement_) {
@@ -62046,13 +62072,25 @@ VRDisplay.prototype.wrapForFullscreen = function (element) {
     self.fullscreenElement_.setAttribute('style', cssProperties.join('; ') + ';');
   }
   applyFullscreenElementStyle();
-  return this.fullscreenWrapper_;
+
+	//modified by minimo
+	if (isForceMobile && !isTrueMobile) {
+		enterVRider(this.fullscreenWrapper_, this.fullscreenElement_);
+	}
+
+	return this.fullscreenWrapper_;
 };
 VRDisplay.prototype.removeFullscreenWrapper = function () {
   if (!this.fullscreenElement_) {
     return;
   }
-  var element = this.fullscreenElement_;
+
+	//modified by minimo
+	if (isForceMobile && !isTrueMobile) {
+		exitVRider(this.fullscreenWrapper_);
+	}
+
+	var element = this.fullscreenElement_;
   if (this.fullscreenElementCachedStyle_) {
     element.setAttribute('style', this.fullscreenElementCachedStyle_);
   } else {
@@ -62066,9 +62104,10 @@ VRDisplay.prototype.removeFullscreenWrapper = function () {
     parent.insertBefore(element, this.fullscreenWrapper_);
   }
   else if (this.originalParent_) {
-      this.originalParent_.appendChild(element);
-    }
-  parent.removeChild(this.fullscreenWrapper_);
+    this.originalParent_.appendChild(element);
+  }
+
+	parent.removeChild(this.fullscreenWrapper_);
   return element;
 };
 VRDisplay.prototype.requestPresent = function (layers) {
@@ -65485,8 +65524,8 @@ module.exports.Component = registerComponent('look-controls', {
   tick: function (t) {
     var data = this.data;
     if (!data.enabled) { return; }
-    this.updateOrientation();
-  },
+		this.updateOrientation();
+	},
 
   play: function () {
     this.addEventListeners();
