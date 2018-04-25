@@ -1,5 +1,5 @@
 //modified by minimo
-//update 2018/04/25
+//update 2018/04/25...2
 var isForceMobile = true;	//強制モバイル化
 var isTrueMobile = false;	//本当のモバイルフラグ
 var _pitchObject = null;	//VR時操作ハック用
