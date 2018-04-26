@@ -1,5 +1,5 @@
 //modified by minimo
-//update 2018/04/25...2
+//update 2018/04/26
 var isForceMobile = true;	//強制モバイル化
 var isTrueMobile = false;	//本当のモバイルフラグ
 var _pitchObject = null;	//VR時操作ハック用
@@ -7,29 +7,25 @@ var _yawObject = null;		//VR時操作ハック用
 var _fullscreen = false;	//フルスクリーンフラグ
 
 //VRider専用特殊対応
+//全画面時にコントロールが表示される様に要素の付け替えを行う
 var enterVRider = function (parent, brother) {
 	if (_fullscreen) return;
+	var body = document.getElementsByClassName("a-body"); 
 	var etc = document.getElementById("etc");
-	var movie_bar = document.querySelector(".vr-video-progress-bar-container");
-	var movie_ctrl = document.querySelector(".vr-video-controller");
-	etc.removeChild(movie_bar);
-	etc.removeChild(movie_ctrl);
-	parent.appendChild(movie_bar);
-	parent.appendChild(movie_ctrl);
+	body[0].removeChild(etc);
+	parent.appendChild(etc);
 	_fullscreen = true;
-}
+};
 
-var exitVRider = function (__parent) {
+//付け替えをしたコントロールを元に戻す
+var exitVRider = function (parent) {
 	if (!_fullscreen) return;
+	var body = document.getElementsByClassName("a-body"); 
 	var etc = document.getElementById("etc");
-	var movie_bar = document.querySelector(".vr-video-progress-bar-container");
-	var movie_ctrl = document.querySelector(".vr-video-controller");
-	__parent.removeChild(movie_bar);
-	__parent.removeChild(movie_ctrl);
-	etc.appendChild(movie_bar);
-	etc.appendChild(movie_ctrl);
+	parent.removeChild(etc);
+	body[0].appendChild(etc);
 	_fullscreen = false;
-}
+};
 
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.AFRAME = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
 (function (process){
