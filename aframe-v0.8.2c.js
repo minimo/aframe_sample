@@ -62070,7 +62070,7 @@ VRDisplay.prototype.wrapForFullscreen = function (element) {
   applyFullscreenElementStyle();
 
 	//modified by minimo
-	if (isForceMobile && !isTrueMobile) {
+	if (isForceMobile && !isTrueMobile || isTrueMobile && !isIOS()) {
 		enterVRider(this.fullscreenWrapper_, this.fullscreenElement_);
 	}
 
@@ -62082,7 +62082,7 @@ VRDisplay.prototype.removeFullscreenWrapper = function () {
   }
 
 	//modified by minimo
-	if (isForceMobile && !isTrueMobile) {
+	if (isForceMobile && !isTrueMobile || isTrueMobile && !isIOS()) {
 		exitVRider(this.fullscreenWrapper_);
 	}
 
