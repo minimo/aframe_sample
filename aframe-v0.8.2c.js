@@ -29,7 +29,7 @@ var exitVRider = function (parent) {
 
 /*
 var _iFrameGyroSync = function () {
-	if (window === window.parent) return;
+  if (window === window.parent) return;
 	//親フレームからメッセージを送信出来るかチェック
 	var target = parent.postMessage ? parent : (parent.document.postMessage ? parent.document : undefined);
 	if (typeof target != "undefined") {
