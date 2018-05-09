@@ -1,10 +1,13 @@
 //modified by minimo
-//update 2018/05/01
+//update 2018/05/09...4
 var isForceMobile = true;	//強制モバイル化
 var isTrueMobile = false;	//本当のモバイルフラグ
 var _pitchObject = null;	//VR時操作ハック用
 var _yawObject = null;		//VR時操作ハック用
 var _fullscreen = false;	//フルスクリーンフラグ
+var _isWebViewAndroid = navigator.userAgent.indexOf('Version') !== -1 && navigator.userAgent.indexOf('Android') !== -1 && navigator.userAgent.indexOf('Chrome') !== -1;
+var _isTrueIOS = /iPad|iPhone|iPod/.test(navigator.platform);
+
 
 //VRider専用特殊対応
 //全画面時にコントロールが表示される様に要素の付け替えを行う
@@ -59443,7 +59446,11 @@ var lerp = function lerp(a, b, t) {
 var isIOS = function () {
   var isIOS = /iPad|iPhone|iPod/.test(navigator.platform);
   return function () {
-    return isIOS;
+		//modified by minimo
+		if (_isWebViewAndroid) return false;
+		return true;
+
+		return isIOS;
   };
 }();
 var isWebViewAndroid = function () {
@@ -59518,7 +59525,12 @@ var getScreenHeight = function getScreenHeight() {
   return Math.min(window.screen.width, window.screen.height) * window.devicePixelRatio;
 };
 var requestFullscreen = function requestFullscreen(element) {
-  if (isWebViewAndroid()) {
+
+	//modified by minimo
+	//PCのフルスクリーン無効化
+	return false;
+
+	if (isWebViewAndroid()) {
     return false;
   }
   if (element.requestFullscreen) {
@@ -59535,7 +59547,12 @@ var requestFullscreen = function requestFullscreen(element) {
   return true;
 };
 var exitFullscreen = function exitFullscreen() {
-  if (document.exitFullscreen) {
+
+	//modified by minimo
+	//PCのフルスクリーン無効化
+	return false;
+
+	if (document.exitFullscreen) {
     document.exitFullscreen();
   } else if (document.webkitExitFullscreen) {
     document.webkitExitFullscreen();
@@ -61360,15 +61377,19 @@ FusionPoseSensor.prototype.getOrientation = function () {
   }
 
 	//modified by minimo
-	if (isForceMobile && !isTrueMobile) {
-		var scene = document.querySelector('a-scene');
-		if (scene.is('vr-mode')) {
-			var qt = _yawObject.quaternion.clone();
-			qt.multiply(_pitchObject.quaternion);
-			out.x = qt.x;
-			out.y = qt.y;
-			out.z = qt.z;
-			out.w = qt.w;
+	//PC時のカメラ操作
+	if (isForceMobile) {
+		var isSP = (_isTrueIOS || _isWebViewAndroid);
+		if (!isSP) {
+			var scene = document.querySelector('a-scene');
+			if (scene.is('vr-mode')) {
+				var qt = _yawObject.quaternion.clone();
+				qt.multiply(_pitchObject.quaternion);
+				out.x = qt.x;
+				out.y = qt.y;
+				out.z = qt.z;
+				out.w = qt.w;
+			}
 		}
 	}
 
@@ -77404,7 +77425,11 @@ function isTablet (mockUserAgent) {
 module.exports.isTablet = isTablet;
 
 function isIOS () {
-  return /iPad|iPhone|iPod/.test(window.navigator.platform);
+	//modified by minimo
+	if (_isWebViewAndroid) return false;
+	return true;
+
+	return /iPad|iPhone|iPod/.test(window.navigator.platform);
 }
 module.exports.isIOS = isIOS;
 
@@ -77586,11 +77611,15 @@ module.exports.isGearVR = function () {
 };
 module.exports.isIOS = function () {
   warn('`utils.isIOS` has moved to `utils.device.isIOS`');
-  return device.isIOS(arguments);
+	return device.isIOS(arguments);
 };
 module.exports.isMobile = function () {
   warn('`utils.isMobile has moved to `utils.device.isMobile`');
-  return device.isMobile(arguments);
+
+	//modified by minimo
+	if (isForceMobile && !isTrueMobile) return true;
+
+	return device.isMobile(arguments);
 };
 
 /**
@@ -79307,7 +79336,12 @@ Util.isMobile = function() {
 };
 
 Util.isIOS = function() {
-  return /(iPad|iPhone|iPod)/g.test(navigator.userAgent);
+
+	//modified by minimo
+	if (_isWebViewAndroid) return false;
+	return true;
+
+	return /(iPad|iPhone|iPod)/g.test(navigator.userAgent);
 };
 
 Util.isIFrame = function() {
