@@ -62110,9 +62110,8 @@ VRDisplay.prototype.wrapForFullscreen = function (element) {
   applyFullscreenElementStyle();
 
 	//modified by minimo
-	if (isForceMobile && !isTrueMobile || isTrueMobile && !isIOS()) {
-		enterVRider(this.fullscreenWrapper_, this.fullscreenElement_);
-	}
+	//VRiderコントロール切り替え
+//	if (!_isTrueIOS) enterVRider(this.fullscreenWrapper_, this.fullscreenElement_);
 
 	return this.fullscreenWrapper_;
 };
@@ -62122,9 +62121,9 @@ VRDisplay.prototype.removeFullscreenWrapper = function () {
   }
 
 	//modified by minimo
-	if (isForceMobile && !isTrueMobile || isTrueMobile && !isIOS()) {
-		exitVRider(this.fullscreenWrapper_);
-	}
+	//VRiderコントロール切り替え
+//	if (!_isTrueIOS) exitVRider(this.fullscreenWrapper_);
+
 
 	var element = this.fullscreenElement_;
   if (this.fullscreenElementCachedStyle_) {
@@ -73440,7 +73439,7 @@ module.exports.AScene = registerElement('a-scene', {
           // Lock to landscape orientation on mobile.
           if (self.isMobile && screen.orientation && screen.orientation.lock) {
 						//modified by minimo
-						if (isTrueMobile) {
+						if (_isTrueIOS || _isWebViewAndroid) {
 							screen.orientation.lock('landscape');
 						}
           }
@@ -77617,7 +77616,7 @@ module.exports.isMobile = function () {
   warn('`utils.isMobile has moved to `utils.device.isMobile`');
 
 	//modified by minimo
-	if (isForceMobile && !isTrueMobile) return true;
+	if (isForceMobile) return true;
 
 	return device.isMobile(arguments);
 };
