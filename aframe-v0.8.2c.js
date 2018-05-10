@@ -1,13 +1,13 @@
 //modified by minimo
-//update 2018/05/09...4
+//update 2018/05/10...1
 var isForceMobile = true;	//強制モバイル化
 var isTrueMobile = false;	//本当のモバイルフラグ
 var _pitchObject = null;	//VR時操作ハック用
 var _yawObject = null;		//VR時操作ハック用
 var _fullscreen = false;	//フルスクリーンフラグ
-var _isWebViewAndroid = navigator.userAgent.indexOf('Version') !== -1 && navigator.userAgent.indexOf('Android') !== -1 && navigator.userAgent.indexOf('Chrome') !== -1;
+var _isAndroid = (navigator.userAgent.indexOf('Android') != -1);
 var _isTrueIOS = /iPad|iPhone|iPod/.test(navigator.platform);
-
+if (_isAndroid || _isTrueIOS) isForceMobile = false;
 
 //VRider専用特殊対応
 //全画面時にコントロールが表示される様に要素の付け替えを行う
@@ -59278,9 +59278,11 @@ var race = function race(promises) {
 var isMobile = function isMobile() {
 	var check = (/Android/i.test(navigator.userAgent) || /iPhone|iPad|iPod/i.test(navigator.userAgent));
 	//modified by minimo
-	if (check === false && isForceMobile) {
-		isTrueMobile = check;
-		return true;
+	if (isForceMobile) {
+		if (check === false) {
+			isTrueMobile = check;
+			return true;
+		}
 	}
 	return check;
 
@@ -59447,8 +59449,7 @@ var isIOS = function () {
   var isIOS = /iPad|iPhone|iPod/.test(navigator.platform);
   return function () {
 		//modified by minimo
-		if (_isWebViewAndroid) return false;
-		return true;
+		if (isForceMobile) return true;
 
 		return isIOS;
   };
@@ -59528,7 +59529,7 @@ var requestFullscreen = function requestFullscreen(element) {
 
 	//modified by minimo
 	//PCのフルスクリーン無効化
-	return false;
+	if (isForceMobile) return false;
 
 	if (isWebViewAndroid()) {
     return false;
@@ -59550,7 +59551,7 @@ var exitFullscreen = function exitFullscreen() {
 
 	//modified by minimo
 	//PCのフルスクリーン無効化
-	return false;
+	if (isForceMobile) return false;
 
 	if (document.exitFullscreen) {
     document.exitFullscreen();
@@ -59625,9 +59626,11 @@ var isMobile = function isMobile() {
   })(navigator.userAgent || navigator.vendor || window.opera);
 
 	//modified by minimo
-	if (check === false && isForceMobile) {
-		isTrueMobile = check;
-		return true;
+	if (isForceMobile) {
+		if (check === false) {
+			isTrueMobile = check;
+			return true;
+		}
 	}
 
 	return check;
@@ -61379,7 +61382,7 @@ FusionPoseSensor.prototype.getOrientation = function () {
 	//modified by minimo
 	//PC時のカメラ操作
 	if (isForceMobile) {
-		var isSP = (_isTrueIOS || _isWebViewAndroid);
+		var isSP = (_isTrueIOS || _isAndroid);
 		if (!isSP) {
 			var scene = document.querySelector('a-scene');
 			if (scene.is('vr-mode')) {
@@ -73439,7 +73442,7 @@ module.exports.AScene = registerElement('a-scene', {
           // Lock to landscape orientation on mobile.
           if (self.isMobile && screen.orientation && screen.orientation.lock) {
 						//modified by minimo
-						if (_isTrueIOS || _isWebViewAndroid) {
+						if (!isForceMobile) {
 							screen.orientation.lock('landscape');
 						}
           }
@@ -77425,8 +77428,7 @@ module.exports.isTablet = isTablet;
 
 function isIOS () {
 	//modified by minimo
-	if (_isWebViewAndroid) return false;
-	return true;
+	if (isForceMobile) return true;
 
 	return /iPad|iPhone|iPod/.test(window.navigator.platform);
 }
@@ -79337,8 +79339,7 @@ Util.isMobile = function() {
 Util.isIOS = function() {
 
 	//modified by minimo
-	if (_isWebViewAndroid) return false;
-	return true;
+	if (isForceMobile) return true;
 
 	return /(iPad|iPhone|iPod)/g.test(navigator.userAgent);
 };
